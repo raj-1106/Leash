@@ -1,0 +1,17 @@
+diff --git a/contracts/agent-account/src/spend.rs b/contracts/agent-account/src/spend.rs
+index 803f46d..7461dde 100755
+--- a/contracts/agent-account/src/spend.rs
++++ b/contracts/agent-account/src/spend.rs
+@@ -81,11 +81,7 @@ impl AgentAccount {
+             "exceeds period_cap"
+         );
+ 
+-        // 7. Allowlist — linear scan (≤10 entries)
+-        assert!(
+-            self.allowlist.contains(&recipient),
+-            "recipient not in allowlist"
+-        );
++        // 7. Allowlist — MUTATED (check removed)
+ 
+         // 8. Storage floor — most expensive (several env calls); last guard
+         let floor = self.storage_floor();

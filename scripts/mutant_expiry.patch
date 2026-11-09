@@ -1,0 +1,13 @@
+diff --git a/contracts/agent-account/src/lib.rs b/contracts/agent-account/src/lib.rs
+index fa8db95..21c6927 100755
+--- a/contracts/agent-account/src/lib.rs
++++ b/contracts/agent-account/src/lib.rs
+@@ -380,7 +380,7 @@ impl AgentAccount {
+                 require!(slot.proposer == cur_owner, "proposer is no longer owner");
+                 let now = env::block_timestamp();
+                 require!(now >= slot.deadline, "before deadline");
+-                require!(now <  slot.expiry,   "action expired");
++                // MUTANT: require!(now < slot.expiry, "action expired");
+ 
+                 match slot.kind {
+                     ActionKind::Loosen { new_per_tx, new_period } => {

@@ -1,0 +1,13 @@
+diff --git a/contracts/agent-account/src/lib.rs b/contracts/agent-account/src/lib.rs
+index fa8db95..6e6f89c 100755
+--- a/contracts/agent-account/src/lib.rs
++++ b/contracts/agent-account/src/lib.rs
+@@ -329,7 +329,7 @@ impl AgentAccount {
+         let cur_owner = token.owner_id;
+ 
+         // Auth: caller must be the current NFT owner
+-        require!(caller == cur_owner, "not owner");
++        // MUTANT: require!(caller == cur_owner, "not owner");
+ 
+         match action {
+             Action::Pause => {

@@ -1,0 +1,17 @@
+diff --git a/contracts/agent-account/src/spend.rs b/contracts/agent-account/src/spend.rs
+index 803f46d..4e8afe0 100755
+--- a/contracts/agent-account/src/spend.rs
++++ b/contracts/agent-account/src/spend.rs
+@@ -71,11 +71,7 @@ impl AgentAccount {
+         assert!(amount <= self.per_tx_cap, "exceeds per_tx_cap");
+ 
+         // 6. Period cap — advance ring then sum in one borrow scope
+-        let current_sum = {
+-            let mut r = self.ring_ref();
+-            r.advance(env::block_timestamp());
+-            r.sum()
+-        };
++        let current_sum = 0u128;
+         assert!(
+             current_sum.saturating_add(amount.as_yoctonear()) <= self.period_cap.as_yoctonear(),
+             "exceeds period_cap"

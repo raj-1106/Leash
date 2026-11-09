@@ -1,0 +1,13 @@
+diff --git a/contracts/agent-account/src/spend.rs b/contracts/agent-account/src/spend.rs
+index 803f46d..f1c382d 100755
+--- a/contracts/agent-account/src/spend.rs
++++ b/contracts/agent-account/src/spend.rs
+@@ -73,7 +73,7 @@ impl AgentAccount {
+         // 6. Period cap — advance ring then sum in one borrow scope
+         let current_sum = {
+             let mut r = self.ring_ref();
+-            r.advance(env::block_timestamp());
++            // MUTANT: r.advance(env::block_timestamp());
+             r.sum()
+         };
+         assert!(

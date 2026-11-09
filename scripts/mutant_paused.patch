@@ -1,0 +1,14 @@
+diff --git a/contracts/agent-account/src/spend.rs b/contracts/agent-account/src/spend.rs
+index 803f46d..611c35e 100755
+--- a/contracts/agent-account/src/spend.rs
++++ b/contracts/agent-account/src/spend.rs
+@@ -44,8 +44,7 @@ impl AgentAccount {
+         recipient: AccountId,
+         memo:      Option<String>,
+     ) -> Promise {
+-        // 1. Boolean flag — cheapest guard
+-        assert!(!self.paused, "paused");
++        // 1. Boolean flag — MUTATED (check removed)
+ 
+         // 2. Predecessor must be self (agent account caller)
+         assert_eq!(

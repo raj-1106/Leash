@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  ui:
+    build: .
+    container_name: leash-security-console
+    ports:
+      - "8080:80"
+    restart: unless-stopped

@@ -1,0 +1,18 @@
+diff --git a/contracts/agent-account/src/spend.rs b/contracts/agent-account/src/spend.rs
+index 803f46d..10ea171 100755
+--- a/contracts/agent-account/src/spend.rs
++++ b/contracts/agent-account/src/spend.rs
+@@ -87,12 +87,7 @@ impl AgentAccount {
+             "recipient not in allowlist"
+         );
+ 
+-        // 8. Storage floor — most expensive (several env calls); last guard
+-        let floor = self.storage_floor();
+-        assert!(
+-            env::account_balance().as_yoctonear() >= amount.as_yoctonear() + floor,
+-            "spend would drop balance below storage floor"
+-        );
++        // 8. Storage floor — MUTATED (check removed)
+ 
+         // All guards passed — record spend in ring before transfer
+         let bucket_index = {

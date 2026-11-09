@@ -1,0 +1,25 @@
+{
+  "name": "@leash/tools",
+  "version": "0.1.0",
+  "description": "Verification, bootstrap, and supervisory security tooling for Leash",
+  "main": "dist/src/index.js",
+  "bin": {
+    "leash": "dist/src/cli.js"
+  },
+  "scripts": {
+    "build": "tsc && cp -r dist/src/* dist/ 2>/dev/null || true",
+    "test": "tsc --noEmit && tsc && node --test dist/test/**/*.test.js test/**/*.test.mjs",
+    "verify": "node dist/src/cli.js",
+    "lock": "node dist/src/lock.js",
+    "bootstrap": "node dist/src/bootstrap.js",
+    "demo": "node dist/src/demo_agent.js"
+  },
+  "dependencies": {
+    "near-api-js": "0.45.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.4.0",
+    "near-kit": "0.20.2"
+  }
+}

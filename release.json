@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0.0",
+  "project": "Leash",
+  "release_tag": "v0.1.0-unreleased",
+  "build_environment": "sourcescan/cargo-near:0.21.1-rust-1.96.0@sha256:ccb22bb4e677ed022d8b9d1aa1b32f0af52dd0471ef1c32e48dedbf68ee6ee17",
+  "compiler": {
+    "rustc": "1.96.0",
+    "cargo_near": "0.21.1",
+    "target": "wasm32-unknown-unknown"
+  },
+  "artifacts": {
+    "agent_account": {
+      "path": "target/near/agent_account/agent_account.wasm",
+      "sha256": null,
+      "size_bytes": null,
+      "min_guardian_window_seconds": 3600
+    },
+    "nft": {
+      "path": "target/near/nft/nft.wasm",
+      "sha256": null,
+      "size_bytes": null
+    }
+  },
+  "forbiddenCodeHashes": [
+    "433aa7a5031c2daa9ee44efd5d504f4c1c5541dd044caca38d7a16a714a0e360"
+  ],
+  "security_invariants": {
+    "zero_full_access_keys": true,
+    "atomic_batch_birth": true,
+    "sliding_window_buckets": 24,
+    "min_period_seconds": 1440,
+    "production_min_guardian_seconds": 3600,
+    "storage_floor_protected": true,
+    "concurrency_protection": "slot.take() atomic nullification"
+  }
+}

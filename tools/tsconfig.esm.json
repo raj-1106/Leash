@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "Node",
+    "outDir": "../web",
+    "rootDir": "src",
+    "strict": true,
+    "skipLibCheck": true,
+    "declaration": false
+  },
+  "files": [
+    "src/evaluator.ts"
+  ]
+}

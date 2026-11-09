@@ -1,0 +1,18 @@
+diff --git a/contracts/agent-account/src/lib.rs b/contracts/agent-account/src/lib.rs
+index fa8db95..afd69f5 100755
+--- a/contracts/agent-account/src/lib.rs
++++ b/contracts/agent-account/src/lib.rs
+@@ -353,11 +353,8 @@ impl AgentAccount {
+             Action::Request { kind } => {
+                 let now = env::block_timestamp();
+                 self.validate_kind_in_callback(&kind);
+-                match &self.owner_slot {
+-                    None => {}
+-                    Some(s) if s.expiry <= now => {}
+-                    Some(s) if s.proposer != cur_owner => {}
+-                    Some(_) => panic!("pending action exists — cancel_own first"),
++                if self.owner_slot.is_some() {
++                    panic!("pending action exists — cancel_own first");
+                 }
+                 self.owner_slot = Some(PendingAction {
+                     kind,

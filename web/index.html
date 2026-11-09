@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leash Inspector</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src http://127.0.0.1:* http://localhost:* https://rpc.testnet.near.org https://rpc.mainnet.near.org; img-src 'self' data:; base-uri 'none'; form-action 'none';">
+  <link rel="stylesheet" href="styles.css?v=5">
+</head>
+<body>
+<div class="r lt" id="root-theme">
+  <!-- Sample Data Notice Banner -->
+  <div class="st" role="note" id="sample-banner">Sample data. Mockup. Not a real account or verdict.</div>
+
+  <!-- Top Navigation Tabs -->
+  <div class="tabs" role="tablist" aria-label="Main Navigation">
+    <div class="tab on" id="tab-overview" role="tab" aria-selected="true" data-tab="overview" tabindex="0">Overview (plain)</div>
+    <div class="tab" id="tab-report" role="tab" aria-selected="false" data-tab="report" tabindex="0">Report (plain)</div>
+    <div class="tab" id="tab-inspector" role="tab" aria-selected="false" data-tab="inspector" tabindex="0">Inspector</div>
+    <div class="tab" id="tab-readme" role="tab" aria-selected="false" data-tab="readme" tabindex="0">For engineers (IDE)</div>
+    <div class="tab" id="tab-replay" role="tab" aria-selected="false" data-tab="replay" tabindex="0">replay</div>
+    <div style="margin-left:auto;display:flex;align-items:center;padding:0 14px;gap:8px">
+      <button class="b2" id="btn-theme-toggle" type="button" style="min-height:28px;padding:0 10px;font-size:11px">dark / light</button>
+    </div>
+  </div>
+
+
+  <!-- ==================== VIEW 1: PLAIN LANGUAGE LANDING ==================== -->
+  <div class="tab-panel" id="view-overview" role="tabpanel" aria-labelledby="tab-overview">
+    <div class="p">
+      <div class="nav2">
+        <div class="mono" style="font-weight:600;font-size:22px">leash</div>
+        <nav class="nav2" style="gap:24px">
+          <a href="#four-questions">How it works</a>
+          <a href="#where-it-fits">Where it fits</a>
+          <a href="#what-covers">What a check covers</a>
+          <button class="link-btn" id="plain-nav-engineers" type="button">For engineers</button>
+          <button class="b hot" id="plain-nav-check" type="button">Check an agent</button>
+        </nav>
+      </div>
+
+      <section class="hero2">
+        <div>
+          <div class="sm">A SPENDING LIMIT FOR AI AGENTS</div>
+          <h1 class="h1" style="margin-top:12px">Give your AI agent a <span class="mk">budget</span>, not your wallet.</h1>
+          <p class="lead">Leash puts an AI agent’s money behind hard limits that are enforced on the blockchain. Anyone, including your partners, can check those limits in under a minute. No wallet, no account.</p>
+          <div class="row" style="margin-top:26px">
+            <label class="f" style="max-width:380px">Paste an agent address
+              <input class="in" id="plain-agent-input" value="agent.test.near" spellcheck="false" autocomplete="off">
+            </label>
+            <button class="b hot" id="btn-plain-run" type="button">Check it</button>
+            <button class="b2" id="btn-plain-sample" type="button">See a sample report</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="sm" style="margin-bottom:6px">SAMPLE · like a company card for an AI</div>
+          <svg viewBox="0 0 420 110" width="100%" role="img" aria-label="An owner key connected by a limited line to an AI agent">
+            <rect x="14" y="30" width="48" height="48" fill="none" stroke="var(--ink)" stroke-width="2"></rect>
+            <text x="38" y="60" text-anchor="middle" font-size="12" font-family="'IBM Plex Mono',monospace" fill="var(--ink)">NFT</text>
+            <path d="M62 54 C150 12 270 96 358 54" fill="none" stroke="var(--ink)" stroke-width="2.5"></path>
+            <path d="M130 30v14M210 52v14M290 74v-14" stroke="var(--ac)" stroke-width="5"></path>
+            <circle cx="380" cy="54" r="24" fill="none" stroke="var(--ink)" stroke-width="2"></circle>
+            <text x="380" y="58" text-anchor="middle" font-size="12" font-family="'IBM Plex Mono',monospace" fill="var(--ink)">AI</text>
+            <text x="38" y="102" text-anchor="middle" font-size="12" font-family="'IBM Plex Sans',sans-serif" fill="var(--mu)">owner</text>
+            <text x="380" y="102" text-anchor="middle" font-size="12" font-family="'IBM Plex Sans',sans-serif" fill="var(--mu)">agent</text>
+            <text x="210" y="14" text-anchor="middle" font-size="12" font-family="'IBM Plex Sans',sans-serif" fill="var(--mu)">limits in between</text>
+          </svg>
+          <div class="rw"><span>Per payment limit</span><b id="plain-hero-per-payment">0.25 NEAR</b></div>
+          <div class="rw"><span>Per period limit</span><b id="plain-hero-per-period">0.5 NEAR</b></div>
+          <div class="rw"><span>Approved payees</span><b id="plain-hero-approved">2 accounts</b></div>
+          <div class="rw"><span>Emergency freeze</span><b>a guardian can pause</b></div>
+          <div class="rw"><span>Who is in charge</span><b id="plain-hero-owner">the NFT holder</b></div>
+        </div>
+      </section>
+
+      <section id="four-questions">
+        <h2 class="h2">The four questions people ask.</h2>
+        <div class="q">
+          <div class="card">
+            <h3 class="h3">Can the agent run off with everything?</h3>
+            <p style="margin:0;color:var(--mu)">Not past its limits. Each payment and each period has a hard cap written into the contract.</p>
+          </div>
+          <div class="card">
+            <h3 class="h3">Who is in charge?</h3>
+            <p style="margin:0;color:var(--mu)">Whoever holds the NFT. Transfer the NFT and control moves with it.</p>
+          </div>
+          <div class="card">
+            <h3 class="h3">What if something looks wrong?</h3>
+            <p style="margin:0;color:var(--mu)">A guardian can freeze the agent. Loosening limits has to wait out a delay first.</p>
+          </div>
+          <div class="card">
+            <h3 class="h3">Can I check this myself?</h3>
+            <p style="margin:0;color:var(--mu)">Yes. Paste the address. The check runs in your browser against a public data source.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="where-it-fits">
+        <h2 class="h2">Where teams could use it.</h2>
+        <p class="lead" style="margin:0 0 20px">These are ideas, not customer claims.</p>
+        <div class="q">
+          <div class="card">
+            <h3 class="h3">A treasury assistant</h3>
+            <p style="margin:0;color:var(--mu)">An agent that pays routine invoices without ever holding the whole treasury.</p>
+          </div>
+          <div class="card">
+            <h3 class="h3">Vendor payments</h3>
+            <p style="margin:0;color:var(--mu)">Pay only approved accounts, up to a set amount each time.</p>
+          </div>
+          <div class="card">
+            <h3 class="h3">Trading with a loss cap</h3>
+            <p style="margin:0;color:var(--mu)">Let an agent trade while the worst case stays a known number.</p>
+          </div>
+          <div class="card">
+            <h3 class="h3">Partner pilots</h3>
+            <p style="margin:0;color:var(--mu)">Hand a partner a one-page check instead of a technical walkthrough.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="what-covers" class="q" style="grid-template-columns:repeat(auto-fit,minmax(340px,1fr))">
+        <div class="card">
+          <h2 class="h2" style="font-size:26px">A check tells you</h2>
+          <p class="rw"><span class="yes">✓ The agent has one restricted key</span></p>
+          <p class="rw"><span class="yes">✓ The code matches what was published</span></p>
+          <p class="rw"><span class="yes">✓ What the limits are right now</span></p>
+        </div>
+        <div class="card">
+          <h2 class="h2" style="font-size:26px">A check does not tell you</h2>
+          <p class="rw"><span class="no">✕ That the code is free of bugs</span></p>
+          <p class="rw"><span class="no">✕ That the data source is honest</span></p>
+          <p class="rw"><span class="no">✕ That the published files are genuine</span></p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="sm">GOOD TO KNOW</div>
+        <h2 class="h2" style="margin-top:6px">Each agent key has a fuel tank.</h2>
+        <p class="lead" style="margin:0">A key funded with 0.25 NEAR covers about 8 payments at the default setting, then it needs replacing. Every check shows how much is left. <span class="road">estimate</span></p>
+      </section>
+
+      <section class="card" style="display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:center">
+        <div>
+          <h2 class="h2" style="margin:0 0 6px">Send a check to a partner.</h2>
+          <p class="lead" style="margin:0;font-size:16px">A one-page report with the answers above, in plain words. <span class="road">export available</span></p>
+        </div>
+        <button class="b hot" id="btn-plain-check-bottom" type="button">Check an agent</button>
+      </section>
+
+      <footer class="sm">For engineers: technical report, command-line checker and source. Real-time cryptographic verification on NEAR Protocol.</footer>
+    </div>
+  </div>
+
+
+
+  <!-- ==================== VIEW 2: PLAIN LANGUAGE REPORT ==================== -->
+  <div class="tab-panel" id="view-report" role="tabpanel" aria-labelledby="tab-report" style="display:none">
+    <div class="p" style="gap:24px">
+      <div class="nav2">
+        <div class="mono" style="font-weight:600;font-size:22px">leash</div>
+        <div class="sm" id="plain-report-meta">agent.test.near · checked at block 123456789 · 2026-10-26 09:14 UTC</div>
+      </div>
+
+      <section class="card" id="plain-report-verdict-card" style="border-left-width:10px;border-left-color:var(--ok)">
+        <div class="sm">RESULT</div>
+        <h1 class="h1" id="plain-report-verdict-title" style="font-size:48px;max-width:22ch;margin:8px 0 10px">
+          <span class="yes" id="plain-report-verdict-icon">✓</span> <span id="plain-report-verdict-text">This agent is locked to its limits.</span>
+        </h1>
+        <p class="lead" style="margin:0">We checked how the agent’s access is set up and that the code matches what was published. We did not audit the code itself.</p>
+        <div class="row" style="margin-top:18px">
+          <button class="b" id="btn-report-tech" type="button">Technical view</button>
+          <button class="b2" id="btn-report-download" type="button">Download one-page report</button>
+        </div>
+      </section>
+
+      <section class="q">
+        <div class="card">
+          <div class="sm">Can the agent take full control?</div>
+          <div class="big yes" id="plain-qa-fullcontrol" style="margin:6px 0">No</div>
+          <p style="margin:0;color:var(--mu)" id="plain-qa-fullcontrol-desc">It holds one restricted key and no key with full access.</p>
+        </div>
+        <div class="card">
+          <div class="sm">Is this the code that was published?</div>
+          <div class="big yes" id="plain-qa-codematch" style="margin:6px 0">Yes</div>
+          <p style="margin:0;color:var(--mu)" id="plain-qa-codematch-desc">The deployed code matches the published version, character for character.</p>
+        </div>
+        <div class="card">
+          <div class="sm">Who can change the rules?</div>
+          <div class="big" id="plain-qa-owner" style="margin:6px 0">The NFT holder</div>
+          <p style="margin:0;color:var(--mu)"><span id="plain-qa-owner-id">owner-sample.testnet</span>. A guardian can freeze the agent.</p>
+        </div>
+        <div class="card">
+          <div class="sm">Is everything verified?</div>
+          <div class="big unk" id="plain-qa-logic" style="margin:6px 0">Not the logic</div>
+          <p style="margin:0;color:var(--mu)">The code has not been audited, so we cannot promise it has no bugs.</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 class="h2" style="font-size:26px">The numbers, in plain terms</h2>
+        <div class="rw"><span>Spent in the current period</span><b id="plain-num-spent">0.2 of 0.5 NEAR</b></div>
+        <div class="rw"><span>Worst case before anyone notices</span><b id="plain-num-worst">up to 0.5 NEAR</b></div>
+        <div class="rw"><span>Fuel left on the agent’s key</span><b id="plain-num-fuel">about 8 payments <span class="road">estimate</span></b></div>
+        <div class="rw"><span>Pending changes to the rules</span><b id="plain-num-pending">0 pending</b></div>
+      </section>
+
+      <section class="card">
+        <h2 class="h2" style="font-size:26px">What we cannot tell you</h2>
+        <p class="rw"><span class="no">✕ That the contract’s code has no bugs.</span></p>
+        <p class="rw"><span class="no">✕ That our data source is telling the truth. This check used one.</span></p>
+        <p class="rw"><span class="no">✕ That the published files are genuine. Compare them yourself.</span></p>
+      </section>
+
+      <footer class="sm">For engineers: technical report, command-line checker and source. Sample data on every page of this mockup.</footer>
+    </div>
+  </div>
+
+
+<!-- ==================== VIEW 1: LANDING / EDITOR (README.md) ==================== -->
+  <div class="ide tab-panel" id="view-readme" role="tabpanel" style="display:none" aria-labelledby="tab-readme">
+    <!-- Explorer Sidebar -->
+    <div class="side" role="navigation" aria-label="Project Explorer">
+      <h6>EXPLORER</h6>
+      <div style="font-weight:600;color:var(--ink)">▾ leash-inspector</div>
+      <div class="side-item on" id="side-readme" data-side="readme">&nbsp;&nbsp;README.md</div>
+      <div class="side-item" id="side-verify" data-side="verify">&nbsp;&nbsp;verify.ts</div>
+      <div class="side-item" id="side-limits" data-side="limits">&nbsp;&nbsp;limits.md</div>
+      <div class="side-item" id="side-release" data-side="release">&nbsp;&nbsp;release.json</div>
+      <div class="side-item" id="side-demo" data-side="demo">&nbsp;&nbsp;demo-run.json</div>
+      <div style="padding:18px 18px 0 18px">
+        <button class="b hot" id="sidebar-open-inspector" type="button" style="min-height:38px;width:100%">Open inspector</button>
+      </div>
+    </div>
+
+    <!-- Main Content Area of IDE -->
+    <div class="main">
+      <!-- Sub-pane 1: README.md -->
+      <div id="pane-readme">
+        <div class="mono mu" style="font-size:13px"># leash · NEAR agent accounts</div>
+        <h1 class="hero">An AI agent on a leash you can <span class="hl">inspect</span><span class="caret"></span></h1>
+        <div class="mono cm" style="font-size:14px;max-width:62ch;line-height:1.7;margin-top:12px">
+          // An NFT owns the agent’s account. The agent can only call spend(), inside caps a guardian can veto. Paste any account and see exactly what is proven, and what is not.
+        </div>
+
+        <div class="row" style="margin-top:20px;margin-bottom:24px">
+          <label class="f" style="max-width:420px">$ leash-cli verify (SIMULATION)
+            <input class="in" id="landing-account-input" value="agent.test.near" spellcheck="false" autocomplete="off">
+          </label>
+          <button class="b hot" id="landing-btn-run" type="button">Run ⏎</button>
+          <button class="b2" id="landing-btn-limits" type="button">Read limits.md</button>
+        </div>
+
+        <!-- Sample CLI Output Panel -->
+        <section class="pn" style="margin-bottom:26px" aria-labelledby="out-heading">
+          <div class="pt" id="out-heading">▾ CLI Output (SIMULATION · Sample Data)</div>
+          <div class="pb">
+            <div class="cd">
+              <div class="l rv" style="animation-delay:0.1s"><i>1</i><span><span class="mu">$</span> leash-cli verify <span class="s" id="landing-out-account">agent.test.near</span></span></div>
+              <div class="l rv" style="animation-delay:0.2s"><i>2</i><span>as of block <span class="n" id="landing-out-block">123456789</span>  2026-10-26T09:14:02Z</span></div>
+              <div class="l rv" style="animation-delay:0.3s"><i>3</i><span><span class="ok">✓</span> keys         1 key, FunctionCall, receiver is self, methods [spend]</span></div>
+              <div class="l rv" style="animation-delay:0.4s"><i>4</i><span><span class="ok" id="landing-out-code-icon">✓</span> code hash    <span id="landing-out-code">EcqwWy…okBd equals release.json</span></span></div>
+              <div class="l rv" style="animation-delay:0.5s"><i>5</i><span><span class="ok">✓</span> nft           keyless, owner <span id="landing-out-nft-owner">owner-sample.testnet</span></span></div>
+              <div class="l rv" style="animation-delay:0.6s"><i>6</i><span><span class="warn">!</span> allowance     about 8 calls at 30 Tgas (approximate)</span></div>
+              <div class="l rv" style="animation-delay:0.7s"><i>7</i><span><span class="ok" id="landing-out-verdict">verdict: KEY STRUCTURE VERIFIED</span></span></div>
+              <div class="l rv" style="animation-delay:0.8s"><i>8</i><span><span class="cm">// proves key structure and build identity. does not audit contract logic.</span></span></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Grid: What Green Verdict Means + Limits.md -->
+        <div class="g" style="margin-bottom:26px">
+          <section class="pn" aria-labelledby="claims-meaning-heading">
+            <div class="pt" id="claims-meaning-heading">▾ what a green verdict means</div>
+            <div class="pb">
+              <div class="cd">
+                <div class="l"><i>1</i><span><span class="add">+ key structure at the pinned block</span></span></div>
+                <div class="l"><i>2</i><span><span class="add">+ deployed wasm equals the published build</span></span></div>
+                <div class="l"><i>3</i><span><span class="del">- the contract logic is safe</span></span></div>
+                <div class="l"><i>4</i><span><span class="del">- the RPC is honest</span></span></div>
+                <div class="l"><i>5</i><span><span class="del">- release.json is authentic</span></span></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="pn" aria-labelledby="limits-summary-heading">
+            <div class="pt" id="limits-summary-heading">▾ limits.md</div>
+            <div class="pb">
+              <div class="cd">
+                <div class="l"><i>1</i><span><span class="cm">// limits.md</span></span></div>
+                <div class="l"><i>2</i><span><span class="cm">// A 0.25 NEAR key sustains about 8 spend calls at 30 Tgas.</span></span></div>
+                <div class="l"><i>3</i><span><span class="cm">// The allowance is not refunded, and the inspector shows the estimate next to every key.</span></span></div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- The State The Inspector Reads -->
+        <section class="pn" aria-labelledby="stateview-heading">
+          <div class="pt" id="stateview-heading">▾ the state the inspector reads</div>
+          <div class="pb">
+            <div class="cd">
+              <div class="l"><i>1</i><span><span class="cm">// contracts/agent-account/src/lib.rs, returned by get_state</span></span></div>
+              <div class="l"><i>2</i><span><span class="k">pub struct</span> <span class="t">StateView</span> {</span></div>
+              <div class="l"><i>3</i><span>    <span class="k">pub</span> interface_version:  <span class="t">u32</span>,</span></div>
+              <div class="l"><i>4</i><span>    <span class="k">pub</span> nft_contract:       <span class="t">AccountId</span>,</span></div>
+              <div class="l"><i>5</i><span>    <span class="k">pub</span> guardian:           <span class="t">AccountId</span>,</span></div>
+              <div class="l"><i>6</i><span>    <span class="k">pub</span> per_tx_cap:         <span class="t">NearToken</span>,</span></div>
+              <div class="l"><i>7</i><span>    <span class="k">pub</span> period_cap:         <span class="t">NearToken</span>,</span></div>
+              <div class="l"><i>8</i><span>    <span class="k">pub</span> paused:             <span class="t">bool</span>,</span></div>
+              <div class="l"><i>9</i><span>    <span class="k">pub</span> allowlist:          <span class="t">Vec</span>&lt;<span class="t">AccountId</span>&gt;,</span></div>
+              <div class="l"><i>10</i><span>}</span></div>
+              <div class="l"><i>11</i><span><span class="cm">// self-reported unless the verdict is KEY STRUCTURE VERIFIED</span></span></div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Sub-pane 2: verify.ts -->
+      <div id="pane-verify" style="display:none">
+        <section class="pn">
+          <div class="pt">▾ tools/src/evaluator.ts</div>
+          <div class="pb">
+            <div class="cd">
+              <div class="l"><i>1</i><span><span class="cm">// Core Single-Verdict Engine Parity (CLI & Browser Shared Logic)</span></span></div>
+              <div class="l"><i>2</i><span><span class="k">export function</span> <span class="fn">evaluateVerification</span>(ctx: <span class="t">EvalContext</span>): <span class="t">VerificationOutcome</span> {</span></div>
+              <div class="l"><i>3</i><span>  <span class="k">const</span> failingRules: <span class="t">string</span>[] = [];</span></div>
+              <div class="l"><i>4</i><span>  <span class="k">if</span> (ctx.fullAccessKeys.length &gt; 0) failingRules.push(<span class="s">"ZERO_FULL_ACCESS_KEYS"</span>);</span></div>
+              <div class="l"><i>5</i><span>  <span class="k">if</span> (ctx.scopedKeys.length !== 1) failingRules.push(<span class="s">"SINGLE_SCOPED_SPEND_KEY"</span>);</span></div>
+              <div class="l"><i>6</i><span>  <span class="k">if</span> (!ctx.nftIsKeyless) failingRules.push(<span class="s">"NFT_KEYLESS"</span>);</span></div>
+              <div class="l"><i>7</i><span>  <span class="k">if</span> (ctx.expectedSha &amp;&amp; ctx.actualSha !== ctx.expectedSha) failingRules.push(<span class="s">"WASM_HASH_MATCH"</span>);</span></div>
+              <div class="l"><i>8</i><span>  <span class="k">return</span> buildOutcome(failingRules);</span></div>
+              <div class="l"><i>9</i><span>}</span></div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Sub-pane 3: limits.md -->
+      <div id="pane-limits" style="display:none">
+        <section class="pn">
+          <div class="pt">▾ docs/limits.md</div>
+          <div class="pb">
+            <div class="cd">
+              <div class="l"><i>1</i><span># Gas &amp; Allowance Invariants</span></div>
+              <div class="l"><i>2</i><span></span></div>
+              <div class="l"><i>3</i><span>- Key allowance is an upfront non-refundable reservation per function call.</span></div>
+              <div class="l"><i>4</i><span>- At 30 Tgas attached, each call reserves ~0.0289 NEAR (sandbox-measured).</span></div>
+              <div class="l"><i>5</i><span>- A 0.25 NEAR allowance key sustains approximately 8 calls before exhaustion.</span></div>
+              <div class="l"><i>6</i><span>- Maximum economic exposure is bounded by: period_cap + reservation_slack.</span></div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Sub-pane 4: release.json -->
+      <div id="pane-release-side" style="display:none">
+        <section class="pn">
+          <div class="pt">▾ release.json</div>
+          <div class="pb">
+            <div class="cd">
+              <pre id="side-release-pre" style="margin:0;padding:0 16px;font-family:inherit;font-size:inherit;line-height:inherit;color:inherit;white-space:pre-wrap"></pre>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Sub-pane 5: demo-run.json -->
+      <div id="pane-demo-side" style="display:none">
+        <section class="pn">
+          <div class="pt">▾ demo-run.json</div>
+          <div class="pb">
+            <div class="cd">
+              <pre id="side-demo-pre" style="margin:0;padding:0 16px;font-family:inherit;font-size:inherit;line-height:inherit;color:inherit;white-space:pre-wrap"></pre>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  
+
+<!-- ==================== VIEW 2: INSPECTOR ==================== -->
+  <main class="main tab-panel" id="view-inspector" style="display:none" role="tabpanel" aria-labelledby="tab-inspector">
+    <!-- Query Target Panel -->
+    <section class="pn" aria-labelledby="query-heading">
+      <div class="pb">
+        <div class="row">
+          <label class="f">RPC URL
+            <input class="in" id="input-rpc" list="rpc-presets" value="http://127.0.0.1:43989" spellcheck="false" autocomplete="off">
+            <datalist id="rpc-presets">
+              <option value="http://127.0.0.1:43989">Local Sandbox (Port 43989)</option>
+              <option value="http://127.0.0.1:3030">Sandbox (Default)</option>
+              <option value="https://rpc.testnet.near.org">NEAR Testnet</option>
+            </datalist>
+          </label>
+          <label class="f">Account
+            <input class="in" id="input-account" value="agent.test.near" spellcheck="false" autocomplete="off">
+          </label>
+          <label class="f" style="max-width:140px">Attached Gas (Tgas)
+            <input class="in" id="input-attached-gas" type="number" min="1" max="300" value="30">
+          </label>
+          <button class="b" id="btn-verify" type="button">Verify</button>
+          <label class="mono" style="display:flex;gap:8px;align-items:center;min-height:44px;font-size:13px;user-select:none">
+            <input type="checkbox" id="auto-refresh-toggle" style="width:18px;height:18px"> auto-refresh
+          </label>
+        </div>
+        <p class="mono mu" style="margin:12px 0 0;font-size:12px" id="query-meta-line" aria-live="polite">
+          as of block 123456789 · 2026-10-26T09:14:02Z · read-only · verdicts are relative to release.json
+        </p>
+      </div>
+    </section>
+
+    <!-- Master Verification Banner -->
+    <section class="vd" id="verdict-banner" style="border-color:var(--ok);background:var(--okbg)" aria-labelledby="v" aria-live="polite">
+      <div>
+        <b class="ok" id="v">✓ KEY STRUCTURE VERIFIED</b>
+        <p id="verdict-copy">
+          Proves key structure and that the deployed code matches the published build. Does not audit the contract logic. Computed by this page against one RPC provider; re-run the CLI and make repro to check independently.
+        </p>
+      </div>
+    </section>
+
+    <!-- Checks Out Box -->
+    <section class="pn" aria-labelledby="checks-heading">
+      <div class="pt" id="checks-heading">▾ checks.out</div>
+      <div class="pb">
+        <div class="cd">
+          <div class="l rv" style="animation-delay:0.1s"><i>1</i><span><span class="ok" id="chk-keys">✓ keys        pass</span></span></div>
+          <div class="l rv" style="animation-delay:0.2s"><i>2</i><span><span class="ok" id="chk-code">✓ code hash   pass</span></span></div>
+          <div class="l rv" style="animation-delay:0.3s"><i>3</i><span><span class="ok" id="chk-nft">✓ nft keyless pass</span></span></div>
+          <div class="l rv" style="animation-delay:0.4s"><i>4</i><span><span class="ok" id="chk-iface">✓ interface   pass</span></span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Grid 1: keys.json & spend.meter -->
+    <div class="g">
+      <!-- keys.json -->
+      <section class="pn" aria-labelledby="keys-heading">
+        <div class="pt" id="keys-heading">▾ keys.json</div>
+        <div class="pb">
+          <div class="cd">
+            <div class="l"><i>1</i><span><span class="mu">{</span></span></div>
+            <div class="l"><i>2</i><span>  <span class="t">"public_key"</span>: <span class="s" id="key-pk">"ed25519:7Hq2…Lm4P"</span>,</span></div>
+            <div class="l"><i>3</i><span>  <span class="t">"permission"</span>: <span class="mu">{</span> <span class="t">"FunctionCall"</span>: <span class="mu">{</span></span></div>
+            <div class="l"><i>4</i><span>    <span class="t">"receiver_id"</span>: <span class="s" id="key-receiver">"agent.test.near"</span>,</span></div>
+            <div class="l"><i>5</i><span>    <span class="t">"method_names"</span>: [<span class="s">"spend"</span>],</span></div>
+            <div class="l"><i>6</i><span>    <span class="t">"allowance"</span>: <span class="s" id="key-allowance">"250000000000000000000000"</span></span></div>
+            <div class="l"><i>7</i><span>  <span class="mu">}</span> <span class="mu">}</span></span></div>
+            <div class="l"><i>8</i><span><span class="mu">}</span></span></div>
+          </div>
+          <p class="ok mono" id="key-status-text" style="margin:10px 0 0;font-size:13px">✓ all key rules pass</p>
+          <p class="mu" id="key-capacity-text" style="margin:6px 0 0;font-size:14px">
+            About 8 calls at 30 Tgas attached. The allowance is not refunded, so each call drains about 0.0289 NEAR (sandbox measurement, approximate). <span class="tag" id="key-reservations-tag">below 20 reservations</span>
+          </p>
+        </div>
+      </section>
+
+      <!-- spend.meter -->
+      <section class="pn" aria-labelledby="meter-heading">
+        <div class="pt" id="meter-heading">▾ spend.meter</div>
+        <div class="pb">
+          <div class="mono" style="font-size:34px;font-weight:600">
+            <span id="spend-current">0.2</span> <span class="mu" style="font-size:16px">/ <span id="spend-cap">0.5</span> NEAR</span>
+          </div>
+          <svg viewBox="0 0 400 24" width="100%" height="24" role="img" aria-label="Spend meter" style="margin:10px 0">
+            <rect x=".5" y="4.5" width="399" height="15" fill="none" stroke="var(--mu)"></rect>
+            <rect class="fillm" id="meter-svg-fill" x="0" y="5" width="160" height="14" fill="var(--ac)"></rect>
+            <path d="M399.5 0v24" stroke="var(--ink)" stroke-width="2"></path>
+          </svg>
+          <p class="mu" style="margin:0;font-size:14px">
+            Cap enforced over any window of period minus one bucket. The contract returns only the window total, so no per-bucket history is shown. Max loss before detection: <span id="spend-max-loss">0.5 NEAR (approximate)</span>.
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <!-- Grid 2: hash.diff & nft.json -->
+    <div class="g">
+      <!-- hash.diff -->
+      <section class="pn" aria-labelledby="hash-heading">
+        <div class="pt" id="hash-heading">▾ hash.diff</div>
+        <div class="pb">
+          <div class="cd">
+            <div class="l"><i>1</i><span><span class="del">- published  <span id="hash-pub-line">EcqwWyLjBymr9s34H7T5hovyc69TTaH8MDok9LXookBd</span></span></span></div>
+            <div class="l"><i>2</i><span><span class="add">+ computed   <span id="hash-comp-line">EcqwWyLjBymr9s34H7T5hovyc69TTaH8MDok9LXookBd</span></span></span></div>
+          </div>
+          <p class="ok" id="hash-match-verdict" style="margin:10px 0 0">All 44 characters match.</p>
+        </div>
+      </section>
+
+      <!-- nft.json -->
+      <section class="pn" aria-labelledby="nft-heading">
+        <div class="pt" id="nft-heading">▾ nft.json</div>
+        <div class="pb">
+          <div class="cd">
+            <div class="l"><i>1</i><span>contract  <span class="s" id="nft-contract">nft.test.near</span></span></div>
+            <div class="l"><i>2</i><span>token_id  <span class="s" id="nft-token">token-1</span></span></div>
+            <div class="l"><i>3</i><span>owner     <span class="s" id="nft-owner">owner-sample.testnet</span></span></div>
+            <div class="l"><i>4</i><span>keys      <span class="ok" id="nft-keys">0</span>  <span class="cm">// keyless</span></span></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- owner_slot -->
+    <section class="pn" aria-labelledby="owner-slot-heading">
+      <div class="pt" id="owner-slot-heading">▾ owner_slot</div>
+      <div class="pb">
+        <div class="cd">
+          <div class="l"><i>1</i><span><span class="cm">// get_owner_slot, chain time <span id="owner-slot-time">2026-10-26T09:14:02Z</span></span></span></div>
+          <div class="l"><i>2</i><span><span class="k" id="owner-slot-action">Withdraw</span> <span id="owner-slot-details">{ amount: <span class="n">0.5 NEAR</span> }</span></span></div>
+          <div class="l"><i>3</i><span>proposer          <span class="s" id="owner-slot-proposer">owner-sample.testnet</span></span></div>
+          <div class="l"><i>4</i><span>earliest execute  <span id="owner-slot-earliest">in 2h 10m</span></span></div>
+          <div class="l"><i>5</i><span>expires           <span id="owner-slot-expires">in 26h 10m</span></span></div>
+          <div class="l"><i>6</i><span><span class="cm">// guardian: the central trust assumption of this design</span></span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- claims.diff -->
+    <section class="pn" aria-labelledby="claims-diff-heading">
+      <div class="pt" id="claims-diff-heading">▾ claims.diff</div>
+      <div class="pb">
+        <div class="cd">
+          <div class="l"><i>1</i><span><span class="add">+ key structure at the pinned block</span></span></div>
+          <div class="l"><i>2</i><span><span class="add">+ deployed wasm equals the published build</span></span></div>
+          <div class="l"><i>3</i><span><span class="del">- the contract logic is safe</span></span></div>
+          <div class="l"><i>4</i><span><span class="del">- the RPC is honest</span></span></div>
+          <div class="l"><i>5</i><span><span class="del">- release.json is authentic</span></span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ==================== VIEW 3: REPLAY ==================== -->
+  <main class="main tab-panel" id="view-replay" style="display:none" role="tabpanel" aria-labelledby="tab-replay">
+    <div class="replay-container">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div class="scenario-tabs" role="tablist" aria-label="Replay Scenarios">
+          <button class="scenario-tab active" data-scenario="0" type="button">Scenario A: Normal Spend</button>
+          <button class="scenario-tab" data-scenario="1" type="button">Scenario B: Over-Cap Rejection</button>
+          <button class="scenario-tab" data-scenario="2" type="button">Scenario C: NFT Supervisory Sale</button>
+        </div>
+        <label class="b2" style="cursor:pointer;min-height:28px;padding:4px 10px;font-size:12px;display:inline-flex;align-items:center">
+          Upload JSON
+          <input type="file" id="file-replay-upload" accept=".json" style="display:none">
+        </label>
+      </div>
+
+      <div class="replay-controls">
+        <button class="b2" id="btn-replay-prev" type="button">◄ Previous</button>
+        <button class="b2" id="btn-replay-play" type="button">▶ Play</button>
+        <button class="b2" id="btn-replay-next" type="button">Next ►</button>
+      </div>
+
+      <section class="vd" id="replay-verdict-box" style="border-color:var(--ok);background:var(--okbg)">
+        <div>
+          <b class="ok" id="replay-title">✓ SCENARIO A: Legitimate Operation Within Cap</b>
+          <p id="replay-summary-text">
+            0.2 NEAR transfer to demo-bob.test.near. All 8 guards pass. Net gas burnt: 4.38 TGas. Transaction confirmed.
+          </p>
+        </div>
+      </section>
+
+      <section class="pn">
+        <div class="pt" style="display:flex;justify-content:space-between">
+          <span>▾ execution.trace</span>
+          <button class="b2" id="btn-copy-trace" style="min-height:22px;padding:0 8px;font-size:11px" type="button">copy</button>
+        </div>
+        <div class="pb">
+          <div class="cd">
+            <pre id="replay-trace-pre" style="margin:0;padding:0 16px;font-family:inherit;font-size:inherit;line-height:inherit;color:inherit;white-space:pre-wrap"></pre>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- ==================== VIEW 4: RELEASE.JSON ==================== -->
+  <main class="main tab-panel" id="view-release" style="display:none" role="tabpanel" aria-labelledby="tab-release">
+    <section class="pn">
+      <div class="pt">▾ release.json</div>
+      <div class="pb">
+        <div class="cd">
+          <pre id="release-json-pre" style="margin:0;padding:0 16px;font-family:inherit;font-size:inherit;line-height:inherit;color:inherit;white-space:pre-wrap"></pre>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ==================== VIEW 5: LIMITS.MD ==================== -->
+  <main class="main tab-panel" id="view-limits" style="display:none" role="tabpanel" aria-labelledby="tab-limits">
+    <section class="pn">
+      <div class="pt">▾ limits.md</div>
+      <div class="pb">
+        <div class="cd" style="padding:16px">
+          <h2 style="font-size:18px;margin-bottom:12px">Gas and Allowance Reservation Bounds</h2>
+          <p class="mu" style="margin-bottom:12px">
+            In NEAR protocol, FunctionCall access keys with allowances reserve the full attached gas fee upfront from the allowance.
+            Unlike on-chain execution where unused gas is refunded to the account balance, access key allowances are <strong>never refunded</strong>.
+          </p>
+          <div class="l"><i>1</i><span>Attached Gas: 30 Tgas</span></div>
+          <div class="l"><i>2</i><span>Upfront Key Reservation: ~0.0289 NEAR per call</span></div>
+          <div class="l"><i>3</i><span>Key Allowance: 0.25 NEAR -> ~8 invocations capacity</span></div>
+          <div class="l"><i>4</i><span>Key Allowance: 1.00 NEAR -> ~34 invocations capacity</span></div>
+          <div class="l"><i>5</i><span>Window Cap: Enforced per sliding period minus one bucket</span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Bottom Status Bar -->
+  <footer class="sb" role="contentinfo">
+    <span>⎇ master</span>
+    <span id="sb-command">leash verify agent.test.near</span>
+    <span id="sb-block">block 123456789</span>
+    <span class="hot" id="sb-status">SAMPLE DATA</span>
+  </footer>
+</div>
+
+<script type="module" src="app.js?v=5"></script>
+</body>
+</html>
+

@@ -1,0 +1,15 @@
+diff --git a/contracts/agent-account/src/lib.rs b/contracts/agent-account/src/lib.rs
+index fa8db95..d3165d2 100755
+--- a/contracts/agent-account/src/lib.rs
++++ b/contracts/agent-account/src/lib.rs
+@@ -419,8 +419,8 @@ pub fn validate_tighten(
+     new_per_tx: NearToken, new_period: NearToken,
+     cur_per_tx: NearToken, cur_period: NearToken,
+ ) {
+-    require!(new_per_tx <= cur_per_tx, "tighten cannot raise per_tx_cap");
+-    require!(new_period  <= cur_period,  "tighten cannot raise period_cap");
++    // MUTANT: allow tighten to raise cap
++    require!(new_per_tx >= cur_per_tx, "tighten cannot raise per_tx_cap");
+     require!(
+         new_per_tx < cur_per_tx || new_period < cur_period,
+         "tighten must reduce at least one cap"

@@ -1,0 +1,18 @@
+diff --git a/contracts/agent-account/src/spend.rs b/contracts/agent-account/src/spend.rs
+index 803f46d..709fba2 100755
+--- a/contracts/agent-account/src/spend.rs
++++ b/contracts/agent-account/src/spend.rs
+@@ -54,12 +54,7 @@ impl AgentAccount {
+             "predecessor must be current_account_id"
+         );
+ 
+-        // 3. Key identity — one env call
+-        assert_eq!(
+-            env::signer_account_pk(),
+-            self.agent_key,
+-            "wrong signer key"
+-        );
++        // 3. Key identity — MUTATED (check removed)
+ 
+         // 4. Memo length bound
+         if let Some(ref m) = memo {

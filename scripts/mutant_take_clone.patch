@@ -1,0 +1,13 @@
+diff --git a/contracts/agent-account/src/lib.rs b/contracts/agent-account/src/lib.rs
+index fa8db95..aab23fe 100755
+--- a/contracts/agent-account/src/lib.rs
++++ b/contracts/agent-account/src/lib.rs
+@@ -376,7 +376,7 @@ impl AgentAccount {
+             }
+ 
+             Action::Execute => {
+-                let slot = self.owner_slot.take().expect("no pending action");
++                let slot = self.owner_slot.clone().expect("no pending action");
+                 require!(slot.proposer == cur_owner, "proposer is no longer owner");
+                 let now = env::block_timestamp();
+                 require!(now >= slot.deadline, "before deadline");

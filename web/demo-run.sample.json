@@ -1,0 +1,73 @@
+{
+  "agent_account_id": "locked-agent.test.near",
+  "cli_verification": {
+    "locked_agent_account": {
+      "account_id": "locked-agent.test.near",
+      "cli_output": "========================================================\n🔍 Verifying Leash Account: locked-agent.test.near\n   RPC Endpoint: http://127.0.0.1:32901/\n========================================================\n\nSTATUS: [ LOCKED_AND_VERIFIED ]\n\nPinned Block: 46 (AJRs5LMevbNH8vUejcbiXWdk3FUQn18jiPR9oZvdLtPK)\nChecks:\n  - Zero FullAccess Keys:        ✅ PASS\n  - Single Scoped Spend Key:     ✅ PASS\n  - Keys Strictly Locked:        ✅ PASS\n  - NFT Contract Keyless & Valid:✅ PASS\n  - Deployed SHA-256 Code Hash:  ca56984d69ab84e6ce0e64d242e0ba91a2ae490b13554dd19b87311919172e04",
+      "outcome_with_dev_release": "LOCKED_AND_VERIFIED",
+      "outcome_with_official_release": "KEYS_LOCKED_CODE_UNVERIFIED"
+    },
+    "unlocked_dev_account": {
+      "account_id": "demo-alice.test.near",
+      "cli_output": "========================================================\n🔍 Verifying Leash Account: demo-alice.test.near\n   RPC Endpoint: http://127.0.0.1:32901/\n========================================================\n\nSTATUS: [ NOT_LOCKED ]\n\nPinned Block: 53 (DSsCGeRyXahxKEuGkTNfjtGp8NEdKbX6RusQFjrdHQjt)\nChecks:\n  - Zero FullAccess Keys:        ❌ FAIL\n  - Single Scoped Spend Key:     ❌ FAIL\n  - Keys Strictly Locked:        ❌ FAIL\n  - NFT Contract Keyless & Valid:❌ FAIL\n\nFailing Rule(s):\n  - ZERO_FULL_ACCESS_KEYS\n  - SINGLE_SCOPED_SPEND_KEY\n  - WASM_HASH_MATCH\n  - NFT_VERIFIED\n\nNotes & Discrepancies:\n  - Failed to fetch code: [-32000] Server error: Contract code for contract ID #demo-alice.test.near has never been observed on the node\n  - NFT check encountered issue: Querying [object Object] failed: wasm execution failed with error: CompilationError(CodeDoesNotExist { account_id: \"demo-alice.test.near\" }).\n{\n  \"block_hash\": \"DSsCGeRyXahxKEuGkTNfjtGp8NEdKbX6RusQFjrdHQjt\",\n  \"block_height\": 53,\n  \"error\": \"wasm execution failed with error: CompilationError(CodeDoesNotExist { account_id: \\\"demo-alice.test.near\\\" })\",\n  \"logs\": []\n}\n  - Found 1 FullAccess key(s). Account is NOT keyless.\n  - Expected exactly 1 FunctionCall key, got 0.\n  - Published agent WASM hash is null/empty in release configuration.\n  - NFT contract state could not be read or verified.",
+      "outcome": "NOT_LOCKED"
+    }
+  },
+  "environment": "near-sandbox-offline",
+  "production_wasm_deployed": true,
+  "scenarios": [
+    {
+      "action": "spend",
+      "amount": "0.2 NEAR",
+      "expected": "SUCCESS",
+      "gas_burnt": "4370683049279",
+      "id": "A",
+      "name": "Legitimate Operation Within Cap",
+      "recipient": "demo-bob.test.near",
+      "status": "PASSED"
+    },
+    {
+      "action": "spend",
+      "amount": "2.0 NEAR",
+      "error": "exceeds per_tx_cap",
+      "expected": "REVERT",
+      "id": "B",
+      "name": "Malicious Over-Cap Invoice",
+      "recipient": "demo-bob.test.near",
+      "status": "PASSED"
+    },
+    {
+      "action": "supervisory_action(Execute)",
+      "expected": "REVERT",
+      "id": "C",
+      "name": "Supervisory Ownership Sale & Transfer",
+      "status": "PASSED",
+      "steps": [
+        {
+          "action": "nft_transfer",
+          "outcome": "SUCCESS",
+          "receiver": "demo-dave.test.near",
+          "sender": "demo-alice.test.near",
+          "step": 1
+        },
+        {
+          "action": "execute",
+          "error": "not owner",
+          "outcome": "REVERT",
+          "sender": "demo-alice.test.near",
+          "step": 2
+        },
+        {
+          "action": "execute",
+          "error": "proposer is no longer owner",
+          "outcome": "REVERT",
+          "sender": "demo-dave.test.near",
+          "step": 3
+        }
+      ]
+    }
+  ],
+  "single_scoped_spend_key": true,
+  "timestamp": "2026-10-27T16:45:16Z",
+  "zero_full_access_keys": true
+}

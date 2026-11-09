@@ -1,0 +1,18 @@
+diff --git a/contracts/agent-account/src/spend.rs b/contracts/agent-account/src/spend.rs
+index 803f46d..5b34524 100755
+--- a/contracts/agent-account/src/spend.rs
++++ b/contracts/agent-account/src/spend.rs
+@@ -47,12 +47,7 @@ impl AgentAccount {
+         // 1. Boolean flag — cheapest guard
+         assert!(!self.paused, "paused");
+ 
+-        // 2. Predecessor must be self (agent account caller)
+-        assert_eq!(
+-            env::predecessor_account_id(),
+-            env::current_account_id(),
+-            "predecessor must be current_account_id"
+-        );
++        // 2. Predecessor check — MUTATED (check removed)
+ 
+         // 3. Key identity — one env call
+         assert_eq!(

@@ -1,0 +1,7 @@
+--- a/contracts/agent-account/src/spend.rs
++++ b/contracts/agent-account/src/spend.rs
+@@ -58,3 +58,3 @@
+         // 5. Per-tx cap — arithmetic only
+-        assert!(amount <= self.per_tx_cap, "exceeds per_tx_cap");
++        // MUTANT: Removed per-tx cap check
+ 

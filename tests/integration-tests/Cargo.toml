@@ -1,0 +1,14 @@
+[package]
+name = "integration-tests"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+near-workspaces = "0.24.0-rc.2"
+tokio = { version = "1", features = ["full"] }
+serde_json = "1"
+sha2 = "0.10"
+hex = "0.4"
+bs58 = "0.5"
+chrono = "0.4"
