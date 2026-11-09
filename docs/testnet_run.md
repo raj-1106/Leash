@@ -102,3 +102,41 @@ node dist/src/cli.js verify agent.throwaway-owner.testnet \
 1. **Keyless Supervisory NFT:** The supervisory NFT contract has 0 access keys, ensuring that no master admin key exists that could unilaterally rewrite token state or approvals.
 2. **Atomic Inception:** The agent account is initialized with its scoped key and initial caps in a single block transaction, ensuring no FullAccess key exists at or after inception.
 3. **CORS & Truthful Reporting:** RPC endpoints return `Access-Control-Allow-Origin: *`, allowing the Leash Web Inspector and CLI to cryptographically verify chain state directly.
+
+---
+
+## Release v0.1.0 — Public Testnet Deployment (9 Nov 2026)
+
+Built from tag `v0.1.0` (commit `ed243b3e588cbd72c126fb57d8e2ef55cbeb1def`) with `make repro-clean REF=v0.1.0`
+in `sourcescan/cargo-near:0.21.1-rust-1.96.0` (digest `sha256:ccb22bb4e677ed022d8b9d1aa1b32f0af52dd0471ef1c32e48dedbf68ee6ee17`).
+Two independent clean clones produced identical bytes. These are the published release hashes in `release.json`.
+
+| Artifact | SHA-256 | Size |
+|---|---|---|
+| `agent_account.wasm` | `a0ab517a4253e241f8ffe550978a2220b7d982ded81472a07bec3e4940d94a7f` | 165,228 bytes |
+| `nft.wasm` | `e3ada91402568c3522d5a49cf3b405291fd5abc2ccb3ad4c5e6033cfb9b73147` | 206,551 bytes |
+
+Deployed from those exact files with `--expect-agent-sha256` / `--expect-nft-sha256` set.
+
+| Item | Value |
+|---|---|
+| Network | testnet |
+| NFT contract (keyless) | `nft.leash-throwaway-1025.testnet`, token `token-1` |
+| NFT deploy tx | `8Uo7ydYU4peS6BskRp6zNrK7FLZKx8V8SBynExmbuDAb` |
+| Agent account | `agent2.leash-throwaway-1025.testnet` |
+| Agent inception tx (atomic 5-action batch) | `7mNfWZxFU3qaJeNrYZYm7rfFJfeF4wsfPEt9AMNm5Ysi` |
+| Agent key (FunctionCall, `spend` only, allowance 0.25 NEAR) | `ed25519:ETu4ouB1ZqUFBJsk1As2q2AHrTvKwGDwHQpjJ4oMGALD` |
+| Guardian | `leash-throwaway-2-1025.testnet` (window 3600 s) |
+| Allowlist | `leash-throwaway-2-1025.testnet` |
+| Caps | 0.5 NEAR per transaction, 2.0 NEAR per 1440 s (24 buckets x 60 s) |
+
+Verification, run after `release.json` was updated (block 277081782):
+
+```
+leash verify agent2.leash-throwaway-1025.testnet --rpc https://rpc.testnet.near.org
+STATUS: [ LOCKED_AND_VERIFIED ]
+```
+
+Right after deploy, before the hashes were published in `release.json`, the same check returned
+`KEYS_LOCKED_CODE_UNVERIFIED` (failing rule `WASM_HASH_MATCH`). That is expected: the published hash did not exist yet.
+Throwaway testnet accounts only. This is not an audit and nothing here has touched mainnet.
