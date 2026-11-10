@@ -26,11 +26,11 @@ test('inspectLocalWasmArtifact: accepts clean production wasm', () => {
 });
 
 // --- File Loading Tests ---
-test('release loading: default loads strictly release.json with null published hashes', () => {
+test('release loading: default loads release.json with the published v0.1.0 hashes', () => {
   const cfg = loadReleaseConfig();
   assert.ok(cfg.filePath.endsWith('release.json'));
-  assert.strictEqual(cfg.expectedAgentSha, null, 'release.json must have null published agent hash');
-  assert.strictEqual(cfg.expectedNftSha, null, 'release.json must have null published nft hash');
+  assert.strictEqual(cfg.expectedAgentSha, 'c7d22c1e15711391b6eabfa6bd1138f932e0204e41a0b8fb4ef7b21b9a10e180');
+  assert.strictEqual(cfg.expectedNftSha, 'b5fe6d2bb76e0380de5e97b5b1bc0eeedf49863b2b3ee0282f852b69b64550f2');
 });
 
 test('release loading: explicit release.dev.json loads dev hashes without fallback', () => {

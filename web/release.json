@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "project": "Leash",
-  "release_tag": "v0.1.0-unreleased",
+  "release_tag": "v0.1.0",
   "build_environment": "sourcescan/cargo-near:0.21.1-rust-1.96.0@sha256:ccb22bb4e677ed022d8b9d1aa1b32f0af52dd0471ef1c32e48dedbf68ee6ee17",
   "compiler": {
     "rustc": "1.96.0",
@@ -11,14 +11,14 @@
   "artifacts": {
     "agent_account": {
       "path": "target/near/agent_account/agent_account.wasm",
-      "sha256": null,
-      "size_bytes": null,
+      "sha256": "c7d22c1e15711391b6eabfa6bd1138f932e0204e41a0b8fb4ef7b21b9a10e180",
+      "size_bytes": 165228,
       "min_guardian_window_seconds": 3600
     },
     "nft": {
       "path": "target/near/nft/nft.wasm",
-      "sha256": null,
-      "size_bytes": null
+      "sha256": "b5fe6d2bb76e0380de5e97b5b1bc0eeedf49863b2b3ee0282f852b69b64550f2",
+      "size_bytes": 206551
     }
   },
   "forbiddenCodeHashes": [
