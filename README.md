@@ -1,22 +1,43 @@
-# Leash — Give AI a budget, not your life savings
+<div align="center">
 
-> An AI agent that can spend needs a key, and a key held by an LLM can be stolen or tricked into draining the wallet. Leash is a NEAR account for an agent that is born with no full-access key. The agent holds one scoped key that can only call `spend`, and the contract enforces a per-transaction cap, a rolling period cap and a recipient allowlist. The agent is owned by an NFT, and anyone can check the setup with `leash verify`.
+# 🪢 Leash
 
-**Built at NEAR HACKATHON 2026 (NFTs and Security tracks), solo.** Status: tested on testnet, not audited, no mainnet deployment. See [Limits](#limits).
+**Give AI a budget, not your life savings.**
+
+A NEAR account for AI agents that is born with no full-access key, spends only through limits the contract enforces, and can be checked by anyone with one command.
+
+[![Live inspector](https://img.shields.io/badge/live-inspector-2ea44f?style=flat-square)](https://leash-near.vercel.app/)
+[![Network](https://img.shields.io/badge/network-NEAR%20testnet-blue?style=flat-square)](https://testnet.nearblocks.io/address/agent2.leash-throwaway-1025.testnet)
+[![Tracks](https://img.shields.io/badge/tracks-Security%20%2B%20NFTs-8a2be2?style=flat-square)](#tracks)
+[![Tests](https://img.shields.io/badge/tests-80%20passing-2ea44f?style=flat-square)](#tests)
+[![Status](https://img.shields.io/badge/status-not%20audited-orange?style=flat-square)](#limits)
+[![License](https://img.shields.io/badge/license-MIT-lightgrey?style=flat-square)](LICENSE)
+
+**Built solo at NEAR HACKATHON 2026.** &nbsp;·&nbsp; [Live inspector](https://leash-near.vercel.app/) &nbsp;·&nbsp; [Testnet agent](https://testnet.nearblocks.io/address/agent2.leash-throwaway-1025.testnet) &nbsp;·&nbsp; [Release v0.1.0](release.json)
+
+</div>
 
 ---
 
-## ⚡ 5-Minute Judge & Evaluator Path
+## The problem
 
-- **Live Web Inspector:** [https://leash-near.vercel.app/](https://leash-near.vercel.app/)
-- **Testnet Agent Account:** `agent2.leash-throwaway-1025.testnet`
-- **RPC Endpoint:** `https://rpc.testnet.near.org`
-- **Supervisory NFT Contract:** `nft.leash-throwaway-1025.testnet` (Token `token-1`, keyless)
-- **Live Inception Tx:** [`7mNfWZxFU3qaJeNrYZYm7rfFJfeF4wsfPEt9AMNm5Ysi`](https://testnet.nearblocks.io/txns/7mNfWZxFU3qaJeNrYZYm7rfFJfeF4wsfPEt9AMNm5Ysi)
-- **Live Verdict:** **`LOCKED_AND_VERIFIED`** (Zero FullAccess Keys, Single Scoped Spend Key, Bytecode SHA-256 Match, Keyless NFT).
-- **Release:** tag `v0.1.0` (commit `ed243b3`), built reproducibly in a pinned Docker image. Hashes are in [`release.json`](release.json).
+An AI agent that can spend needs a key. A key held by an LLM can be stolen, leaked or talked out of the agent, and one bad prompt can drain the whole wallet.
 
-**Try it in 30 seconds (needs Node 20+):**
+## What Leash does
+
+| | |
+|---|---|
+| 🔑 **No master key** | The agent account is created in one atomic transaction with **zero full-access keys**. Nobody can take it over later. |
+| 🎯 **One scoped key** | The agent holds a single function-call key that can only call `spend`. |
+| 🚧 **Limits in the contract** | Per-transaction cap, rolling 24-bucket period cap, recipient allowlist and a storage balance floor. A bad spend reverts on-chain. |
+| 🖼️ **NFT ownership** | A single-supply NFT owns the account. The holder can pause or tighten limits instantly. Loosening or withdrawing is timelocked. |
+| ✅ **Anyone can verify** | `leash verify` checks the keys, the NFT and the deployed code hash against a reproducible release. |
+
+---
+
+## Try it in 30 seconds
+
+Needs Node 20+.
 
 ```bash
 git clone https://github.com/raj-1106/Leash && cd Leash/tools && npm ci && npm run build
@@ -24,11 +45,37 @@ node dist/src/cli.js verify agent2.leash-throwaway-1025.testnet --rpc https://rp
 # STATUS: [ LOCKED_AND_VERIFIED ]
 ```
 
+Or open the **[live inspector](https://leash-near.vercel.app/)**, enter `agent2.leash-throwaway-1025.testnet` with RPC `https://rpc.testnet.near.org`, and click **Verify**.
+
+### What is deployed (testnet)
+
+| Item | Value |
+|---|---|
+| Agent account | [`agent2.leash-throwaway-1025.testnet`](https://testnet.nearblocks.io/address/agent2.leash-throwaway-1025.testnet) |
+| Supervisory NFT | `nft.leash-throwaway-1025.testnet` (token `token-1`, keyless) |
+| Inception tx | [`7mNfWZxFU3qaJeNrYZYm7rfFJfeF4wsfPEt9AMNm5Ysi`](https://testnet.nearblocks.io/txns/7mNfWZxFU3qaJeNrYZYm7rfFJfeF4wsfPEt9AMNm5Ysi) |
+| Release | tag `v0.1.0`, commit `ed243b3`, reproducible Docker build |
+| Agent wasm SHA-256 | `a0ab517a4253e241f8ffe550978a2220b7d982ded81472a07bec3e4940d94a7f` |
+| NFT wasm SHA-256 | `e3ada91402568c3522d5a49cf3b405291fd5abc2ccb3ad4c5e6033cfb9b73147` |
+| Verdict | `LOCKED_AND_VERIFIED` |
+
 ---
 
-## What It Is
+## Live demo: an attack that fails
 
-Leash is an account security kernel for autonomous AI agents. The agent account is created with zero FullAccess keys, holding only a single restricted FunctionCall access key. The contract limits what that key can spend.
+`make demo-testnet` signs as the agent's scoped key on testnet and tries three spends:
+
+| | Spend | Result |
+|---|---|---|
+| ✅ A | 0.1 NEAR to an allowlisted account | succeeds |
+| ❌ B | 0.6 NEAR, over the 0.5 NEAR per-tx cap | reverts: `exceeds per_tx_cap` |
+| ❌ C | 0.1 NEAR to an account not on the allowlist | reverts: `recipient not in allowlist` |
+
+Both attacks fail inside the contract, not in client code. The demo needs the agent key file, which is not in the repo. A supervisory NFT transfer that invalidates the previous owner's pending requests is covered by the integration tests.
+
+---
+
+## How it works
 
 ```
 ┌────────────────────────────────────────────────────────┐
@@ -51,146 +98,106 @@ Leash is an account security kernel for autonomous AI agents. The agent account 
 └────────────────────────────────────────────────────────┘
 ```
 
----
+**Core invariants**
 
-## Core Security Invariants
-
-1. **Zero FullAccess Keys (Keyless at Birth):** Created via an atomic 5-action batch transaction (`CreateAccount`, `Transfer`, `Deploy`, `new`, `AddKey`). The account has no master password.
-2. **24-Bucket Sliding Window:** Period spending limits advance across 24 discrete rolling time buckets, preventing burst draining across window boundaries. Failed transfers trigger private indexed rollbacks.
-3. **NEP-171 Bearer Supervisory Ownership:** Ownership is represented by a single-supply NFT. The bearer of the NFT can pause the agent or tighten limits instantly. Loosening caps or withdrawing balance requires a guardian timelock delay.
-4. **Storage Floor Preservation:** The contract keeps a balance floor for its own storage costs (~2.1 NEAR). Spends and withdrawals that would drop the balance below the floor are rejected.
+1. **Zero full-access keys at birth.** One atomic 5-action batch: `CreateAccount`, `Transfer`, `Deploy`, `new`, `AddKey`.
+2. **24-bucket sliding window.** The period cap advances across 24 rolling buckets, so a burst cannot be split across a window boundary. A failed transfer is rolled back by a private callback.
+3. **NFT bearer ownership.** The NFT holder can pause or tighten limits at once. Loosening caps or withdrawing waits out a guardian timelock.
+4. **Storage floor.** The contract keeps a balance floor (~2.1 NEAR) for its own storage. Spends and withdrawals below it are rejected.
 
 ---
 
-## Real Contract Gas & Resource Budget
+## Tracks
 
-Measured directly against the production contract in NEAR Sandbox:
-- **Successful `spend()`:** `total_gas_burnt = 4,391,658,230,052 gas` (about 4.39 TGas, 0.000439 NEAR).
-- **Reverted `spend()` (exceeding cap):** `total_gas_burnt = 1,585,532,441,294 gas` (about 1.59 TGas, 0.000159 NEAR).
-- **Upfront attached gas reservation:** ~0.0309 NEAR (at 30 TGas attached).
-- **Call Capacity (Approximate, 0.25 NEAR Gas Allowance at 30 TGas Attached):**
-  - **Successful calls:** about 499, from (0.25 - 0.0309) / 0.000439.
-  - **Reverted calls:** about 1,380, from (0.25 - 0.0309) / 0.000159.
+| Track | How Leash fits |
+|---|---|
+| **AI Security & Defense** | Spending limits, a policy-enforcing contract and a scoped **function-call key**: the agent gets money without getting the keys to everything. Verification is public and reproducible. |
+| **NFTs That Do Something** | A **NEP-171** NFT owns the agent account and holds real supervisory behavior: instant pause and tighten, timelocked loosen and withdraw. Ownership has behavior. |
 
 ---
 
-## Live Demo on Testnet
+## Verifier states
 
-`make demo-testnet` signs as the agent's scoped key on testnet and tries three spends:
+`leash verify <account> --rpc <url>` returns one of:
 
-| | Spend | Result |
-|---|---|---|
-| A | 0.1 NEAR to an allowlisted account | succeeds |
-| B | 0.6 NEAR, over the 0.5 NEAR per-tx cap | reverts: `exceeds per_tx_cap` |
-| C | 0.1 NEAR to an account not on the allowlist | reverts: `recipient not in allowlist` |
+| State | Meaning |
+|---|---|
+| `LOCKED_AND_VERIFIED` | 0 full-access keys, exactly 1 scoped key, and the bytecode matches `release.json` |
+| `KEYS_LOCKED_CODE_UNVERIFIED` | Keys are locked, but the bytecode hash is unreleased or differs |
+| `NOT_LOCKED` | A full-access key or an unauthorized permission was found |
+| `TESTING_BUILD` | The bytecode exports testing-only methods |
+| `ERROR` | The account could not be read |
 
-Both attacks fail inside the contract, not in client code. A fourth scenario, a supervisory NFT transfer that invalidates the previous owner's pending requests, is covered by the integration tests.
+Add `--html report.html` for a self-contained report with no runtime JavaScript.
 
 ---
 
-## Verification & Quickstart
+## Tests
 
-### Prerequisites
-- Node 20+ (verifier CLI and web inspector)
-- Rust (version pinned in `rust-toolchain.toml`) with the `wasm32-unknown-unknown` target
-- `cargo-near` CLI
-- Docker (for reproducible release verification)
-
-### Do X → See Y Verification
+80 tests: 7 unit, 31 integration (NEAR sandbox), 42 verifier and parity tests. A mutation run catches 14 of 14 mutants.
 
 ```bash
-# 1. Build contract artifacts (production and testing wasms)
-make build
-# Expected output:
-# ✓ Contract successfully built! Binary: target/near/agent_account/agent_account.wasm
-# ✓ Contract successfully built! Binary: target/near/nft/nft.wasm
-
-# 2. Run the complete test suite (7 unit + 31 integration + 42 verifier & parity tests = 80 total)
-make test
-# Expected output:
-# test result: ok. 7 passed; 0 failed; finished in 0.00s
-# test result: ok. 31 passed; 0 failed; finished in ~100s
-# ℹ tests 42, pass 42, fail 0
-
-# 3. Verify mutation testing defense (all 14 mutants caught cleanly)
+make test                 # 7 unit + 31 integration
+cd tools && npm test      # 42 verifier and parity tests
 ./scripts/run_all_mutants.sh
-# Expected output:
-# 🎯 ALL 14 / 14 MUTANTS CAUGHT CLEANLY!
-
-# 4. Run live sandbox harness with deployed agent and keyless NFT contracts
-make demo-live
-
-# 4b. Run the live testnet spend demo (needs the agent key file, see Live Demo)
-# make demo-testnet
-
-# 5. Verify zero DOM sinks in frontend inspector
-make ui-test
-# Expected output:
-# 0 sinks detected (0 innerHTML/eval/document.write)
-
-# 6. Reproducible Docker verification (verifies byte-for-byte compiler reproducibility)
-# Note: Requires Docker daemon running. Takes ~1-2 min for working tree, ~3-4 min for 2x clean-clone verification.
-make repro                # Builds from working tree HEAD in Docker container
-make repro-clean          # 2x clean-clone hash stability check (usage: make repro-clean REF=v0.1.0)
-# Expected output:
-# 🎉 HASH STABILITY CONFIRMED! (2x RUN MATCHES 100%)
+make ui-test              # no DOM sinks in the web inspector
+make test-chain-proof     # deployed bytes evaluate to LOCKED_AND_VERIFIED in a sandbox
 ```
 
-> **Security & CSP Architecture**:
-> - **Script Execution (`script-src 'self'`)**: Strictly prohibits inline scripts, eval, and third-party remote scripts. Zero DOM sinks (`innerHTML`, `outerHTML`, `eval`, `document.write` are forbidden and enforced via `make ui-test`).
-> - **Styling (`style-src 'self' 'unsafe-inline'`)**: Allows inline styles for dynamic fuel meters, progress bars, and reactive CSS custom properties.
-> - **RPC Connectivity (`connect-src`)**: Deployed builds (e.g. Vercel) connect only to their own origin (for `release.json`) and public RPC endpoints (`https://rpc.testnet.near.org` and `https://rpc.mainnet.near.org`). Local development environments additionally allow `http://127.0.0.1:*` / `http://localhost:*` to interact with `near-kit/sandbox`.
+<details>
+<summary><b>Reproduce the release build</b></summary>
 
----
-
-## Verifier CLI & Static Fallback UI (`--html`)
-
-The Leash Verifier CLI inspects any agent account on-chain or in local sandbox and outputs truthful verdicts:
+Requires Docker, Rust (pinned in `rust-toolchain.toml`) with the `wasm32-unknown-unknown` target, and `cargo-near`.
 
 ```bash
-# Terminal output:
-cd tools && node dist/src/cli.js verify <agent_account_id> --rpc http://localhost:3030
-
-# Generate a self-contained, zero-runtime-JS HTML verification report:
-cd tools && node dist/src/cli.js verify <agent_account_id> --rpc http://localhost:3030 --html report.html
+make build                     # production and testing wasms
+make repro                     # reproducible build from the working tree in Docker
+make repro-clean REF=v0.1.0    # two clean clones; the hashes must match
+# HASH STABILITY CONFIRMED! (2x RUN MATCHES 100%)
 ```
 
-Outputs one of these states:
-- `LOCKED_AND_VERIFIED` (0 FullAccess keys, exactly 1 scoped FunctionCall key, bytecode matches `release.json`)
-- `KEYS_LOCKED_CODE_UNVERIFIED` (Keys strictly locked, but bytecode hash is unreleased or differs)
-- `NOT_LOCKED` (FullAccess keys or unauthorized permissions detected)
-- `TESTING_BUILD` (the bytecode exports testing-only methods)
-- `ERROR` (the account could not be read)
+NEP-330 embeds the git commit SHA in the wasm, so the published hashes are for tag `v0.1.0` (commit `ed243b3`). Later commits change docs and the web inspector only: `git diff v0.1.0 HEAD -- contracts Cargo.toml Cargo.lock rust-toolchain.toml` is empty.
 
----
+</details>
 
-## Truthful Web Inspector & Landing Editor
+<details>
+<summary><b>Gas and resource budget</b></summary>
 
-Run the local web inspector:
+Measured against the production contract in the NEAR sandbox:
+
+- **Successful `spend()`:** about 4.39 TGas (0.000439 NEAR).
+- **Reverted `spend()` (over cap):** about 1.59 TGas (0.000159 NEAR).
+- **Upfront reservation:** about 0.0309 NEAR at 30 TGas attached.
+- **Call capacity of the 0.25 NEAR key allowance:** about 499 successful calls, or about 1,380 reverted calls.
+
+</details>
+
+<details>
+<summary><b>Web inspector and security policy</b></summary>
+
 ```bash
-make ui-dev
-# Serves at http://localhost:8080
+make ui-dev     # serves the inspector at http://localhost:8080
 ```
-- Includes the IDE Landing Page Editor (`README.md`, explorer sidebar, interactive CLI runner).
-- Computes single-verdict parity against `tools/src/evaluator.ts` with zero DOM sinks.
-- Features dynamic SVG gas meters, character-level hash diffs, and 375px mobile responsiveness.
-- Ready for 1-click cloud deployment via root `vercel.json`.
+
+- Static site, deployed with `vercel.json`. Verdict logic matches `tools/src/evaluator.ts`.
+- `script-src 'self'`: no inline scripts, no eval, no third-party scripts. `make ui-test` fails if `innerHTML`, `outerHTML`, `insertAdjacentHTML`, `document.write` or `eval` appear.
+- `connect-src`: the page's own origin (for `release.json`) and the public NEAR RPCs. Local development also allows `localhost`.
+
+</details>
 
 ---
 
 ## Limits
 
 - Tested, not audited. Do not put real funds behind it.
-- Deployed on testnet only. There is no mainnet deployment.
-- The cap logic bounds what the scoped key can spend. It does not protect a recipient on the allowlist from being malicious.
+- Testnet only. There is no mainnet deployment.
+- The caps bound what the scoped key can spend. They do not protect against a malicious recipient that is on the allowlist.
 - The spend key's gas allowance is not refunded, so a compromised key can still burn its allowance (0.25 NEAR here) on failed calls.
 
-## About this project
+## About
 
 Built solo for NEAR HACKATHON 2026. Design and early prototyping started about 25 Oct, before the 1 Nov submission window, with the organizers' approval. This public repository was created on 9 Nov and its history starts there.
 
----
-
 ## License
 
-MIT
+[MIT](LICENSE)
