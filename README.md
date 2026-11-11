@@ -1,6 +1,8 @@
 # Leash — Give AI a budget, not your life savings
 
-> Autonomous AI agents need money to operate, but granting an LLM raw private keys is an invitation to catastrophic loss. Leash provides bounded spending limits, keyless account architecture, and cryptographic supervisory control on NEAR Protocol.
+> An AI agent that can spend needs a key, and a key held by an LLM can be stolen or tricked into draining the wallet. Leash is a NEAR account for an agent that is born with no full-access key. The agent holds one scoped key that can only call `spend`, and the contract enforces a per-transaction cap, a rolling period cap and a recipient allowlist. The agent is owned by an NFT, and anyone can check the setup with `leash verify`.
+
+**Built at NEAR HACKATHON 2026 (NFTs and Security tracks), solo.** Status: tested on testnet, not audited, no mainnet deployment. See [Limits](#limits).
 
 ---
 
@@ -12,12 +14,21 @@
 - **Supervisory NFT Contract:** `nft.leash-throwaway-1025.testnet` (Token `token-1`, keyless)
 - **Live Inception Tx:** [`7mNfWZxFU3qaJeNrYZYm7rfFJfeF4wsfPEt9AMNm5Ysi`](https://testnet.nearblocks.io/txns/7mNfWZxFU3qaJeNrYZYm7rfFJfeF4wsfPEt9AMNm5Ysi)
 - **Live Verdict:** **`LOCKED_AND_VERIFIED`** (Zero FullAccess Keys, Single Scoped Spend Key, Bytecode SHA-256 Match, Keyless NFT).
+- **Release:** tag `v0.1.0` (commit `ed243b3`), built reproducibly in a pinned Docker image. Hashes are in [`release.json`](release.json).
+
+**Try it in 30 seconds (needs Node 20+):**
+
+```bash
+git clone https://github.com/raj-1106/Leash && cd Leash/tools && npm ci && npm run build
+node dist/src/cli.js verify agent2.leash-throwaway-1025.testnet --rpc https://rpc.testnet.near.org
+# STATUS: [ LOCKED_AND_VERIFIED ]
+```
 
 ---
 
 ## What It Is
 
-Leash is an account security kernel for autonomous AI agents. The agent account is born permanently locked with zero FullAccess keys, holding only a single restricted FunctionCall access key strictly bounded by mathematical expenditure caps.
+Leash is an account security kernel for autonomous AI agents. The agent account is created with zero FullAccess keys, holding only a single restricted FunctionCall access key. The contract limits what that key can spend.
 
 ```
 ┌────────────────────────────────────────────────────────┐
@@ -47,39 +58,41 @@ Leash is an account security kernel for autonomous AI agents. The agent account 
 1. **Zero FullAccess Keys (Keyless at Birth):** Created via an atomic 5-action batch transaction (`CreateAccount`, `Transfer`, `Deploy`, `new`, `AddKey`). The account has no master password.
 2. **24-Bucket Sliding Window:** Period spending limits advance across 24 discrete rolling time buckets, preventing burst draining across window boundaries. Failed transfers trigger private indexed rollbacks.
 3. **NEP-171 Bearer Supervisory Ownership:** Ownership is represented by a single-supply NFT. The bearer of the NFT can pause the agent or tighten limits instantly. Loosening caps or withdrawing balance requires a guardian timelock delay.
-4. **Storage Floor Preservation:** Contract state storage costs (~2.1 NEAR) are permanently protected. Spends and withdrawals that would drop balance below the storage floor are rejected.
+4. **Storage Floor Preservation:** The contract keeps a balance floor for its own storage costs (~2.1 NEAR). Spends and withdrawals that would drop the balance below the floor are rejected.
 
 ---
 
 ## Real Contract Gas & Resource Budget
 
 Measured directly against the production contract in NEAR Sandbox:
-- **Successful `spend()`:** `total_gas_burnt = 4,391,658,230,052 gas` (~4.39 TGas $pprox$ 0.000439 NEAR).
-- **Reverted `spend()` (exceeding cap):** `total_gas_burnt = 1,585,532,441,294 gas` (~1.59 TGas $pprox$ 0.000159 NEAR).
+- **Successful `spend()`:** `total_gas_burnt = 4,391,658,230,052 gas` (about 4.39 TGas, 0.000439 NEAR).
+- **Reverted `spend()` (exceeding cap):** `total_gas_burnt = 1,585,532,441,294 gas` (about 1.59 TGas, 0.000159 NEAR).
 - **Upfront attached gas reservation:** ~0.0309 NEAR (at 30 TGas attached).
 - **Call Capacity (Approximate, 0.25 NEAR Gas Allowance at 30 TGas Attached):**
-  - **Successful calls:** $\approx 499$ calls ($(0.25 - 0.0309) / 0.000439 \approx 499$, assuming 4.39 TGas net burn).
-  - **Reverted calls:** $\approx 1,380$ calls ($(0.25 - 0.0309) / 0.000159 \approx 1,380$, assuming 1.59 TGas net burn).
+  - **Successful calls:** about 499, from (0.25 - 0.0309) / 0.000439.
+  - **Reverted calls:** about 1,380, from (0.25 - 0.0309) / 0.000159.
 
 ---
 
-## Demo Scenarios
+## Live Demo on Testnet
 
-The offline demo runner (`make demo` [Planned]) executes three deterministic scenarios:
+`make demo-testnet` signs as the agent's scoped key on testnet and tries three spends:
 
-- **Scenario A: Legitimate Operation Within Cap**  
-  Agent pays an allowlisted vendor 0.2 NEAR for compute. All guards pass; transfer succeeds; spend is recorded in the active ring buffer bucket.
-- **Scenario B: Malicious Over-Cap Invoice**  
-  Agent attempts an unauthorized spend of 2.0 NEAR (exceeding the 1.0 NEAR per-tx cap). Guard 5 triggers; transaction reverts; contract state remains unchanged (gas fee burnt).
-- **Scenario C: Supervisory Ownership Sale & Transfer**  
-  Controller NFT is transferred to a new owner account. The previous owner's pending timelocked requests are invalidated; the new owner assumes exclusive supervisory control.
+| | Spend | Result |
+|---|---|---|
+| A | 0.1 NEAR to an allowlisted account | succeeds |
+| B | 0.6 NEAR, over the 0.5 NEAR per-tx cap | reverts: `exceeds per_tx_cap` |
+| C | 0.1 NEAR to an account not on the allowlist | reverts: `recipient not in allowlist` |
+
+Both attacks fail inside the contract, not in client code. A fourth scenario, a supervisory NFT transfer that invalidates the previous owner's pending requests, is covered by the integration tests.
 
 ---
 
 ## Verification & Quickstart
 
 ### Prerequisites
-- Rust 1.81+ with `wasm32-unknown-unknown` target
+- Node 20+ (verifier CLI and web inspector)
+- Rust (version pinned in `rust-toolchain.toml`) with the `wasm32-unknown-unknown` target
 - `cargo-near` CLI
 - Docker (for reproducible release verification)
 
@@ -106,6 +119,9 @@ make test
 
 # 4. Run live sandbox harness with deployed agent and keyless NFT contracts
 make demo-live
+
+# 4b. Run the live testnet spend demo (needs the agent key file, see Live Demo)
+# make demo-testnet
 
 # 5. Verify zero DOM sinks in frontend inspector
 make ui-test
@@ -139,10 +155,12 @@ cd tools && node dist/src/cli.js verify <agent_account_id> --rpc http://localhos
 cd tools && node dist/src/cli.js verify <agent_account_id> --rpc http://localhost:3030 --html report.html
 ```
 
-Outputs one of three definitive states:
+Outputs one of these states:
 - `LOCKED_AND_VERIFIED` (0 FullAccess keys, exactly 1 scoped FunctionCall key, bytecode matches `release.json`)
 - `KEYS_LOCKED_CODE_UNVERIFIED` (Keys strictly locked, but bytecode hash is unreleased or differs)
 - `NOT_LOCKED` (FullAccess keys or unauthorized permissions detected)
+- `TESTING_BUILD` (the bytecode exports testing-only methods)
+- `ERROR` (the account could not be read)
 
 ---
 
@@ -157,6 +175,19 @@ make ui-dev
 - Computes single-verdict parity against `tools/src/evaluator.ts` with zero DOM sinks.
 - Features dynamic SVG gas meters, character-level hash diffs, and 375px mobile responsiveness.
 - Ready for 1-click cloud deployment via root `vercel.json`.
+
+---
+
+## Limits
+
+- Tested, not audited. Do not put real funds behind it.
+- Deployed on testnet only. There is no mainnet deployment.
+- The cap logic bounds what the scoped key can spend. It does not protect a recipient on the allowlist from being malicious.
+- The spend key's gas allowance is not refunded, so a compromised key can still burn its allowance (0.25 NEAR here) on failed calls.
+
+## About this project
+
+Built solo for NEAR HACKATHON 2026. Design and early prototyping started about 25 Oct, before the 1 Nov submission window, with the organizers' approval. This public repository was created on 9 Nov and its history starts there.
 
 ---
 
