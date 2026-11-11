@@ -4,6 +4,17 @@
 
 ---
 
+## ⚡ 5-Minute Judge & Evaluator Path
+
+- **Live Web Inspector:** [https://leash-near.vercel.app/](https://leash-near.vercel.app/)
+- **Testnet Agent Account:** `agent2.leash-throwaway-1025.testnet`
+- **RPC Endpoint:** `https://rpc.testnet.near.org`
+- **Supervisory NFT Contract:** `nft.leash-throwaway-1025.testnet` (Token `token-1`, keyless)
+- **Live Inception Tx:** [`7mNfWZxFU3qaJeNrYZYm7rfFJfeF4wsfPEt9AMNm5Ysi`](https://testnet.nearblocks.io/txns/7mNfWZxFU3qaJeNrYZYm7rfFJfeF4wsfPEt9AMNm5Ysi)
+- **Live Verdict:** **`LOCKED_AND_VERIFIED`** (Zero FullAccess Keys, Single Scoped Spend Key, Bytecode SHA-256 Match, Keyless NFT).
+
+---
+
 ## What It Is
 
 Leash is an account security kernel for autonomous AI agents. The agent account is born permanently locked with zero FullAccess keys, holding only a single restricted FunctionCall access key strictly bounded by mathematical expenditure caps.
