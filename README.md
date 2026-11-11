@@ -139,7 +139,7 @@ make repro-clean          # 2x clean-clone hash stability check (usage: make rep
 > **Security & CSP Architecture**:
 > - **Script Execution (`script-src 'self'`)**: Strictly prohibits inline scripts, eval, and third-party remote scripts. Zero DOM sinks (`innerHTML`, `outerHTML`, `eval`, `document.write` are forbidden and enforced via `make ui-test`).
 > - **Styling (`style-src 'self' 'unsafe-inline'`)**: Allows inline styles for dynamic fuel meters, progress bars, and reactive CSS custom properties.
-> - **RPC Connectivity (`connect-src`)**: Deployed builds (e.g. Vercel) connect exclusively to public RPC endpoints (`https://rpc.testnet.near.org` and `https://rpc.mainnet.near.org`). Local development environments additionally allow `http://127.0.0.1:*` / `http://localhost:*` to interact with `near-kit/sandbox`.
+> - **RPC Connectivity (`connect-src`)**: Deployed builds (e.g. Vercel) connect only to their own origin (for `release.json`) and public RPC endpoints (`https://rpc.testnet.near.org` and `https://rpc.mainnet.near.org`). Local development environments additionally allow `http://127.0.0.1:*` / `http://localhost:*` to interact with `near-kit/sandbox`.
 
 ---
 
