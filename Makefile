@@ -59,6 +59,9 @@ demo-live: web
 	@echo "Starting persistent sandbox and Leash Inspector..."
 	cd tools && node --input-type=module < ../scripts/demo_live.mjs
 
+demo-testnet:
+	cd tools && node --input-type=module < ../scripts/live_spend_demo.mjs
+
 test-chain-proof:
 	cd tools && node --input-type=module < ../scripts/chain_proof.mjs
 
