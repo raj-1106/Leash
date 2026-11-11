@@ -304,6 +304,27 @@ export async function runLiveVerification() {
       } catch (_) {
         UI_STATE.nftTokenOwner = null;
       }
+
+      try {
+        const nftCodeRes = await rpcPost(UI_STATE.rpcUrl, 'query', {
+          request_type: 'view_code',
+          account_id: nftId,
+          ...blockIdParam
+        }, signal);
+        if (nftCodeRes.code_base64) {
+          const binStr = atob(nftCodeRes.code_base64);
+          const bytes = new Uint8Array(binStr.length);
+          for (let i = 0; i < binStr.length; i++) {
+            bytes[i] = binStr.charCodeAt(i);
+          }
+          const hashes = await sha256WebCrypto(bytes);
+          UI_STATE.nftWasmSha256Hex = hashes.hex;
+        } else {
+          UI_STATE.nftWasmSha256Hex = null;
+        }
+      } catch (_) {
+        UI_STATE.nftWasmSha256Hex = null;
+      }
     }
 
     UI_STATE.isLive = true;
