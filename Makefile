@@ -62,6 +62,9 @@ demo-live: web
 demo-testnet:
 	cd tools && node --input-type=module < ../scripts/live_spend_demo.mjs
 
+demo-injection:
+	cd tools && node --input-type=module < ../scripts/injection_demo.mjs
+
 test-chain-proof:
 	cd tools && node --input-type=module < ../scripts/chain_proof.mjs
 

@@ -35,7 +35,7 @@ async function trySpend(label, nearAmount, recipient, memo) {
       attachedDeposit: '0',
     });
     console.log(`  RESULT: SUCCEEDED  tx ${out.transaction.hash}`);
-    console.log(`  https://explorer.testnet.near.org/transactions/${out.transaction.hash}`);
+    console.log(`  https://testnet.nearblocks.io/txns/${out.transaction.hash}`);
     return true;
   } catch (e) {
     const msg = (e.kind?.ExecutionError || e.message || String(e)).toString();
